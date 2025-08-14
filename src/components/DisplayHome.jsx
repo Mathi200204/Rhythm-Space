@@ -28,7 +28,7 @@ const DisplayHome = () => {
         <div className="flex overflow-auto  ">
           {songsData.map((item, index) => (
             <SongItem
-              key={{ index }}
+              key={ index }
               name={item.name}
               desc={item.desc}
               id={item.id}
