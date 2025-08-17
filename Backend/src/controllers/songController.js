@@ -57,7 +57,7 @@ const listSong = async (req, res) => {
 };
 const removeSong = async (req, res) => {
   try {
-    const { id } = req.params; // Now getting ID from URL params
+    const { id } = req.params; 
     
     if (!id) {
       return res.status(400).json({ 
