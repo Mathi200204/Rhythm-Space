@@ -1,41 +1,58 @@
 import React, { useState } from "react";
 import { assets } from "../assets/assets";
+import axios from "axios";
+import { url } from "../App";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddAlbum = () => {
-  const [image, setImage] = useState(false);
+  const [image, setImage] = useState(null);
   const [colour, setColour] = useState("#ffffff");
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); 
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
     setLoading(true);
 
-    
-    const albumData = {
-      name,
-      desc,
-      colour,
-      image,
-    };
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("desc", desc);
+      formData.append("bgColour", colour); 
+      formData.append("image", image);
 
-    console.log("Album Added:", albumData);
+      const response = await axios.post(`${url}/api/album/add`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-    
-    setTimeout(() => {
-      setLoading(false);
-      setImage(false);
-      setName("");
-      setDesc("");
-      setColour("#ffffff");
-    }, 1000);
+      if (response.data.success) {
+        toast.success("Album added!");
+        setName("");
+        setDesc("");
+        setImage(null);
+        setColour("#ffffff");
+      } else {
+        toast.error(response.data.message || "Something went wrong");
+        console.error("Error:", response.data);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error occurred while adding album");
+    }
+
+    setLoading(false);
   };
 
-  return (
+  return loading ? (
+    <div className="grid place-items-center min-h-[80vh]">
+      <div className="w-16 h-16 border-4 border-gray-400 border-t-green-800 rounded-full animate-spin"></div>
+    </div>
+  ) : (
     <form
       className="flex flex-col items-start gap-8 text-gray-600"
-      onSubmit={handleSubmit}
+      onSubmit={onSubmitHandler}
     >
      
       <div className="flex flex-col gap-4">
