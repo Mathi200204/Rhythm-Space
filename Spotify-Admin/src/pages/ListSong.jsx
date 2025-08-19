@@ -25,8 +25,7 @@ const removeSong = async (id) => {
   } catch (error) {
     toast.error("Error occurred while removing the song");
   }
-};
-
+}
 
   useEffect(() => {
     fetchSongs();
