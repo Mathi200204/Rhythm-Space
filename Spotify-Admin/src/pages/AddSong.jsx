@@ -13,7 +13,6 @@ const AddSong = () => {
   const [loading, setLoading] = useState(false);
   const [albumData, setAlbumData] = useState([]);
 
-  
   useEffect(() => {
     const fetchAlbums = async () => {
       try {
@@ -27,7 +26,6 @@ const AddSong = () => {
     };
     fetchAlbums();
   }, []);
-  
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -48,8 +46,8 @@ const AddSong = () => {
         setName("");
         setDesc("");
         setAlbum("none");
-        setImage(false); 
-        setSong(false);  
+        setImage(false);
+        setSong(false);
       } else {
         toast.error("Something went wrong");
       }
@@ -67,7 +65,6 @@ const AddSong = () => {
   ) : (
     <form onSubmit={onSubmitHandler} className="flex flex-col items-start gap-8 text-gray-600">
       <div className="flex gap-8">
-       
         <div className="flex flex-col gap-4">
           <p>Upload Song</p>
           <input onChange={(e) => setSong(e.target.files[0])} type="file" id="song" accept="audio/*" hidden />
@@ -77,7 +74,6 @@ const AddSong = () => {
           {song && <p className="text-sm text-green-700">{song.name}</p>}
         </div>
 
-       
         <div className="flex flex-col gap-4">
           <p>Upload Image</p>
           <input onChange={(e) => setImage(e.target.files[0])} type="file" id="image" accept="image/*" hidden />
@@ -87,7 +83,6 @@ const AddSong = () => {
         </div>
       </div>
 
-      
       <div>
         <p>Song Name</p>
         <input
@@ -100,7 +95,6 @@ const AddSong = () => {
         />
       </div>
 
-      
       <div>
         <p>Song Description</p>
         <input
@@ -113,7 +107,6 @@ const AddSong = () => {
         />
       </div>
 
-      
       <div className="flex flex-col gap-2.5">
         <p>Album</p>
         <select
@@ -124,15 +117,14 @@ const AddSong = () => {
           id="album"
         >
           <option value="none">None</option>
-          {albumData.map((albumItem) => (
-            <option key={albumItem._id} value={albumItem._id}>
-              {albumItem.name}
+          {albumData.map((item, index) => (
+            <option key={index} value={item.name}>
+              {item.name}
             </option>
           ))}
         </select>
       </div>
 
-      
       <button type="submit" className="text-base bg-black text-white py-2.5 px-14 cursor-pointer">
         {loading ? "Adding..." : "ADD"}
       </button>
