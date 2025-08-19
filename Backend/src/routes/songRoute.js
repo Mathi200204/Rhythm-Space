@@ -10,6 +10,6 @@ songRouter.post("/add", upload.fields([
 ]), addSong);
 
 songRouter.get("/list", listSong);
-songRouter.delete("/remove/:id", removeSong); // Changed to DELETE and using params
+songRouter.delete("/remove/:id", removeSong); 
 
 export default songRouter;
