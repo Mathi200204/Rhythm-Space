@@ -1,13 +1,18 @@
 import { createContext, useEffect, useRef, useState } from "react";
-import { songsData } from "../assets/assets";
+import axios from "axios";
+
 
 export const PlayerContext = createContext();
 
 const PlayerContextProvider = (props) => {
   const audioRef = useRef(null);
   const seekBg = useRef(null);
-  const seekBar = useRef(null); 
+  const seekBar = useRef(null);
 
+  const url = "http://localhost:4000";
+
+  const [songsData, setSongsData] = useState([]);
+  const [albumsData, setAlbumsData] = useState([]);
   const [track, setTrack] = useState(songsData[0]);
   const [playStatus, settPlayStatus] = useState(false);
   const [time, setTime] = useState({
@@ -29,48 +34,75 @@ const PlayerContextProvider = (props) => {
     audioRef.current.pause();
     settPlayStatus(false);
   };
-  const playWithId = async (id) =>{
-     await setTrack(songsData[id]);
-     await audioRef.current.play();
-     settPlayStatus(true);
-  }
+  const playWithId = async (id) => {
+    await setTrack(songsData[id]);
+    await audioRef.current.play();
+    settPlayStatus(true);
+  };
 
-  const previous = async () =>{
-    if (track.id>0){
-      await setTrack(songsData[track.id-1]);
+  const previous = async () => {
+    if (track.id > 0) {
+      await setTrack(songsData[track.id - 1]);
       await audioRef.current.play();
-      settPlayStatus(true)
+      settPlayStatus(true);
     }
-  }
-    const next = async () =>{
-    if (track.id < songsData.length-1){
-      await setTrack(songsData[track.id+1]);
+  };
+  const next = async () => {
+    if (track.id < songsData.length - 1) {
+      await setTrack(songsData[track.id + 1]);
       await audioRef.current.play();
-      settPlayStatus(true)
+      settPlayStatus(true);
     }
-  }
+  };
 
-  const seekSong = async (e) =>{
-    audioRef.current.currentTime = ((e.nativeEvent.offsetX / seekBg.current.offsetWidth)*audioRef.current.duration)
-  }
+  const seekSong = async (e) => {
+    audioRef.current.currentTime =
+      (e.nativeEvent.offsetX / seekBg.current.offsetWidth) *
+      audioRef.current.duration;
+  };
+  const getSongsData = async (e) => {
+    try {
+      const response = await axios.get(`${url}/api/song/list`);
+      setSongsData(response.data.songs);
+      setTrack(response.data.songs[0]);
+    } catch (error) {
+
+    }
+  };
+
+  const getAlbumsData = async () => {
+    try {
+      const response = await axios.get(`${url}/api/album/list`);
+      setAlbumsData(response.data.albums);
+    } catch (error) {}
+  };
   useEffect(() => {
     setTimeout(() => {
       audioRef.current.ontimeupdate = () => {
-        seekBar.current.style.width = (Math.floor(audioRef.current.currentTime/audioRef.current.duration*100))+ "%";
+        seekBar.current.style.width =
+          Math.floor(
+            (audioRef.current.currentTime / audioRef.current.duration) * 100
+          ) + "%";
         setTime({
           currentTime: {
             second: Math.floor(audioRef.current.currentTime % 60),
             minute: Math.floor(audioRef.current.currentTime / 60),
           },
           totalTime: {
-             second: Math.floor(audioRef.current.duration % 60),
+            second: Math.floor(audioRef.current.duration % 60),
             minute: Math.floor(audioRef.current.duration / 60),
           },
         });
       };
     }, 1000);
   }, [audioRef]);
-  
+
+  useEffect(() => {
+    getSongsData();
+    getAlbumsData();
+  }, []);
+  // Remove or implement fetchSongsData to fix the syntax error
+  // const fetchSongsData = async () => {
 
   const contextValue = {
     audioRef,
@@ -87,7 +119,9 @@ const PlayerContextProvider = (props) => {
     playWithId,
     previous,
     next,
-    seekSong
+    seekSong,
+    songsData,
+    albumsData,
   };
 
   return (
@@ -98,6 +132,3 @@ const PlayerContextProvider = (props) => {
 };
 
 export default PlayerContextProvider;
-
-
-
