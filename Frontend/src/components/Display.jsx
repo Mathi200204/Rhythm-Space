@@ -5,6 +5,8 @@ import DisplayAlbum from './DisplayAlbum'
 import { albumsData } from '../assets/assets'
 
 const Display = () => {
+
+  
 const displayRef = useRef();
 const location = useLocation();
 const isAlbum = location.pathname.includes("album");
