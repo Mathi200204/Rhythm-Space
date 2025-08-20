@@ -3,21 +3,20 @@ import Navbar from "./Navbar";
 import { useParams } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { PlayerContext } from "../context/PlayerContext";
+import { set } from "mongoose";
 
 const DisplayAlbum = ({ album }) => {
   const { id } = useParams();
-  const [albumData, setAlbumData] = useState(null);
-  const { playWithId, songsData } = useContext(PlayerContext);
+  const [albumData, setAlbumData] = useState("");
+  const { playWithId, albumsData, songsData } = useContext(PlayerContext);
  
   useEffect(() => {
-    if (album) {
-      setAlbumData(album);
-    }
-  }, [album, id]);
+   if(item._id === id){
+    setAlbumData(item);
+   }
+  }, []);
 
-  if (!albumData) return null;
-
-  return (
+  return albumData ? (
     <>
       <Navbar />
       <div className="mt-10 flex gap-8 flex-col md:flex-row md:items-end">
@@ -59,7 +58,8 @@ const DisplayAlbum = ({ album }) => {
         </div>
       ))}
     </>
-  );
+  ) : null
 };
 
 export default DisplayAlbum;
+
