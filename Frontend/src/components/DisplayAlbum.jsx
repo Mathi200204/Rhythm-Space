@@ -3,20 +3,24 @@ import Navbar from "./Navbar";
 import { useParams } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { PlayerContext } from "../context/PlayerContext";
-import { set } from "mongoose";
 
-const DisplayAlbum = ({ album }) => {
+const DisplayAlbum = () => {
   const { id } = useParams();
-  const [albumData, setAlbumData] = useState("");
+  const [albumData, setAlbumData] = useState(null);
   const { playWithId, albumsData, songsData } = useContext(PlayerContext);
  
   useEffect(() => {
-   if(item._id === id){
-    setAlbumData(item);
-   }
-  }, []);
+    const album = albumsData.find(item => item._id === id);
+    if (album) {
+      setAlbumData(album);
+    }
+  }, [id, albumsData]);
 
-  return albumData ? (
+  if (!albumData) return null;
+
+  const albumSongs = songsData.filter(item => item.album === albumData.name);
+
+  return (
     <>
       <Navbar />
       <div className="mt-10 flex gap-8 flex-col md:flex-row md:items-end">
@@ -29,7 +33,7 @@ const DisplayAlbum = ({ album }) => {
             <img className="inline-block w-5" src={assets.spotify_logo} alt="" />
             <b>Spotify</b>
             • 321,233 likes
-            • <b>50 songs,</b>
+            • <b>{albumSongs.length} songs,</b>
             about 2hr 40 min
           </p>
         </div>
@@ -41,10 +45,10 @@ const DisplayAlbum = ({ album }) => {
         <img className="m-auto w-4" src={assets.clock_icon} alt="" />
       </div>
       <hr />
-      {songsData.filter((item)=> item.album ===album.name).map((item, index) => (
+      {albumSongs.map((item, index) => (
         <div 
           onClick={() => playWithId(item._id)} 
-          key={item.id} 
+          key={item._id} 
           className="grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7] hover:bg-[#ffffff2b] cursor-pointer"
         >
           <p className="text-white">
@@ -58,8 +62,7 @@ const DisplayAlbum = ({ album }) => {
         </div>
       ))}
     </>
-  ) : null
+  );
 };
 
 export default DisplayAlbum;
-

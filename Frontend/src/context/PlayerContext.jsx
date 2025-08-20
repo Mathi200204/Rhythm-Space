@@ -1,7 +1,6 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-
 export const PlayerContext = createContext();
 
 const PlayerContextProvider = (props) => {
@@ -13,69 +12,123 @@ const PlayerContextProvider = (props) => {
 
   const [songsData, setSongsData] = useState([]);
   const [albumsData, setAlbumsData] = useState([]);
-  const [track, setTrack] = useState(songsData[0]);
-  const [playStatus, settPlayStatus] = useState(false);
+  const [track, setTrack] = useState(null);
+  const [playStatus, setPlayStatus] = useState(false);
   const [time, setTime] = useState({
     currentTime: {
-      second: 0,
-      minute: 0,
+      second: "00",
+      minute: "00",
     },
     totalTime: {
-      second: 0,
-      minute: 0,
+      second: "00",
+      minute: "00",
     },
   });
 
-  const play = () => {
-    audioRef.current.play();
-    settPlayStatus(true);
+  const formatTime = (seconds) => {
+    if (isNaN(seconds)) return { minute: "00", second: "00" };
+    
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return {
+      minute: mins < 10 ? `0${mins}` : `${mins}`,
+      second: secs < 10 ? `0${secs}` : `${secs}`
+    };
   };
-  const pause = () => {
-    audioRef.current.pause();
-    settPlayStatus(false);
-  };
-  const playWithId = async (id) => {
-    await songsData.map((item) =>{
-      if(id === item._id){
-        setTrack(item);
+
+  const updateTime = () => {
+    if (audioRef.current) {
+      const currentTime = formatTime(audioRef.current.currentTime);
+      const totalTime = formatTime(audioRef.current.duration);
+      
+      setTime({
+        currentTime,
+        totalTime
+      });
+
+      if (seekBar.current && audioRef.current.duration) {
+        const progress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
+        seekBar.current.style.width = `${progress}%`;
       }
-    })
+    }
+  };
+
+  const play = () => {
+    if (audioRef.current) {
+      audioRef.current.play();
+      setPlayStatus(true);
+    }
+  };
+  
+  const pause = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setPlayStatus(false);
+    }
+  };
+  
+  const playWithId = async (id) => {
+    const song = songsData.find(item => id === item._id);
+    if (song) {
+      setTrack(song);
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play();
+          setPlayStatus(true);
+        }
+      }, 100);
+    }
   };
 
   const previous = async () => {
-
-    songsData.map(async (item, index) => {
-      if(track._id === item._id && index > 0) {
-        await setTrack(songsData[index - 1]);
-        await audioRef.current.play();
-        settPlayStatus(true);
-
-      }
-    })
+    if (!track) return;
+    
+    const currentIndex = songsData.findIndex(item => track._id === item._id);
+    if (currentIndex > 0) {
+      const newTrack = songsData[currentIndex - 1];
+      setTrack(newTrack);
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play();
+          setPlayStatus(true);
+        }
+      }, 100);
+    }
   };
+  
   const next = async () => {
-    songsData.map(async (item, index) => {
-      if(track._id === item._id && index < songsData.length) {
-        await setTrack(songsData[index + 1]);
-        await audioRef.current.play();
-        settPlayStatus(true);
-
-      }
-    })
+    if (!track) return;
+    
+    const currentIndex = songsData.findIndex(item => track._id === item._id);
+    if (currentIndex < songsData.length - 1) {
+      const newTrack = songsData[currentIndex + 1];
+      setTrack(newTrack);
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play();
+          setPlayStatus(true);
+        }
+      }, 100);
+    }
   };
 
   const seekSong = async (e) => {
-    audioRef.current.currentTime =
-      (e.nativeEvent.offsetX / seekBg.current.offsetWidth) *
-      audioRef.current.duration;
+    if (audioRef.current && seekBg.current) {
+      audioRef.current.currentTime =
+        (e.nativeEvent.offsetX / seekBg.current.offsetWidth) *
+        audioRef.current.duration;
+    }
   };
-  const getSongsData = async (e) => {
+  
+  const getSongsData = async () => {
     try {
       const response = await axios.get(`${url}/api/song/list`);
       setSongsData(response.data.songs);
-      setTrack(response.data.songs[0]);
+      if (response.data.songs.length > 0 && !track) {
+        setTrack(response.data.songs[0]);
+      }
     } catch (error) {
-
+      console.error("Error fetching songs:", error);
     }
   };
 
@@ -83,16 +136,38 @@ const PlayerContextProvider = (props) => {
     try {
       const response = await axios.get(`${url}/api/album/list`);
       setAlbumsData(response.data.albums);
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching albums:", error);
+    }
   };
-
 
   useEffect(() => {
     getSongsData();
     getAlbumsData();
   }, []);
-  // Remove or implement fetchSongsData to fix the syntax error
-  // const fetchSongsData = async () => {
+  useEffect(() => {
+    const audio = audioRef.current;
+    
+    if (audio) {
+      audio.addEventListener('timeupdate', updateTime);
+      audio.addEventListener('loadedmetadata', updateTime);
+      audio.addEventListener('ended', () => {
+        setPlayStatus(false);
+        next();
+      });
+    }
+
+    return () => {
+      if (audio) {
+        audio.removeEventListener('timeupdate', updateTime);
+        audio.removeEventListener('loadedmetadata', updateTime);
+        audio.removeEventListener('ended', () => {
+          setPlayStatus(false);
+          next();
+        });
+      }
+    };
+  }, [track]);
 
   const contextValue = {
     audioRef,
@@ -101,7 +176,7 @@ const PlayerContextProvider = (props) => {
     track,
     setTrack,
     playStatus,
-    settPlayStatus,
+    setPlayStatus,
     time,
     setTime,
     play,
@@ -122,6 +197,3 @@ const PlayerContextProvider = (props) => {
 };
 
 export default PlayerContextProvider;
-
-
-//

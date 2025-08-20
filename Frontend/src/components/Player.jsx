@@ -3,7 +3,7 @@ import { assets } from "../assets/assets.js";
 import { PlayerContext } from "../context/PlayerContext.jsx";
 
 const Player = () => {
-  const { track,seekBar, seekBg, playStatus, play, pause,time,previous,next,seekSong } =
+  const { track, seekBar, seekBg, playStatus, play, pause, time, previous, next, seekSong } =
     useContext(PlayerContext);
 
   return track ? (
@@ -47,11 +47,12 @@ const Player = () => {
           <div
             ref={seekBg}
             onClick={seekSong}
-            className="w-[60vw] max-w-[500px] bg-gray-300 rounded-full cursor-pointer "
+            className="w-[60vw] max-w-[500px] bg-gray-300 rounded-full cursor-pointer h-1 relative"
           >
-            <hr
+            <div
               ref={seekBar}
-              className="h-1 border-none w-0 bg bg-green-800 rounded-full"
+              className="h-1 bg-green-800 rounded-full absolute top-0 left-0"
+              style={{ width: '0%' }}
             />
           </div>
           <p>{time.totalTime.minute}:{time.totalTime.second}</p>
