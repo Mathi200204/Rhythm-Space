@@ -24,6 +24,8 @@ const PlayerContextProvider = (props) => {
       minute: "00",
     },
   });
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const formatTime = (seconds) => {
     if (isNaN(seconds)) return { minute: "00", second: "00" };
@@ -80,6 +82,16 @@ const PlayerContextProvider = (props) => {
     }
   };
 
+  const playSearchResult = async (song) => {
+    setTrack(song);
+    setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.play();
+        setPlayStatus(true);
+      }
+    }, 100);
+  };
+
   const previous = async () => {
     if (!track) return;
     
@@ -119,6 +131,24 @@ const PlayerContextProvider = (props) => {
         audioRef.current.duration;
     }
   };
+
+  const searchSongs = async (query) => {
+    try {
+      setSearchQuery(query);
+      if (!query.trim()) {
+        setSearchResults([]);
+        return;
+      }
+      
+      const response = await axios.get(`${url}/api/song/search?query=${encodeURIComponent(query)}`);
+      if (response.data.success) {
+        setSearchResults(response.data.songs);
+      }
+    } catch (error) {
+      console.error("Error searching songs:", error);
+      setSearchResults([]);
+    }
+  };
   
   const getSongsData = async () => {
     try {
@@ -145,6 +175,7 @@ const PlayerContextProvider = (props) => {
     getSongsData();
     getAlbumsData();
   }, []);
+
   useEffect(() => {
     const audio = audioRef.current;
     
@@ -182,11 +213,16 @@ const PlayerContextProvider = (props) => {
     play,
     pause,
     playWithId,
+    playSearchResult,
     previous,
     next,
     seekSong,
     songsData,
     albumsData,
+    searchResults,
+    searchQuery,
+    searchSongs,
+    setSearchQuery
   };
 
   return (
