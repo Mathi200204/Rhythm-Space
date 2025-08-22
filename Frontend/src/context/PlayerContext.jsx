@@ -26,6 +26,7 @@ const PlayerContextProvider = (props) => {
   });
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPlaylist, setCurrentPlaylist] = useState([]);
 
   const formatTime = (seconds) => {
     if (isNaN(seconds)) return { minute: "00", second: "00" };
@@ -73,6 +74,19 @@ const PlayerContextProvider = (props) => {
     const song = songsData.find(item => id === item._id);
     if (song) {
       setTrack(song);
+      
+      // Determine the context: if we're on an album page, use album songs, otherwise use all songs
+      const isAlbumPage = window.location.pathname.includes('/album/');
+      
+      if (isAlbumPage) {
+        // Get album name from the current track
+        const albumSongs = songsData.filter(item => item.album === song.album);
+        setCurrentPlaylist(albumSongs);
+      } else {
+        // Use all songs for "Today's biggest hits" and other non-album contexts
+        setCurrentPlaylist(songsData);
+      }
+      
       setTimeout(() => {
         if (audioRef.current) {
           audioRef.current.play();
@@ -84,6 +98,7 @@ const PlayerContextProvider = (props) => {
 
   const playSearchResult = async (song) => {
     setTrack(song);
+    setCurrentPlaylist(searchResults);
     setTimeout(() => {
       if (audioRef.current) {
         audioRef.current.play();
@@ -93,11 +108,21 @@ const PlayerContextProvider = (props) => {
   };
 
   const previous = async () => {
-    if (!track) return;
+    if (!track || currentPlaylist.length === 0) return;
     
-    const currentIndex = songsData.findIndex(item => track._id === item._id);
+    const currentIndex = currentPlaylist.findIndex(item => track._id === item._id);
     if (currentIndex > 0) {
-      const newTrack = songsData[currentIndex - 1];
+      const newTrack = currentPlaylist[currentIndex - 1];
+      setTrack(newTrack);
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play();
+          setPlayStatus(true);
+        }
+      }, 100);
+    } else if (currentIndex === 0) {
+      // Loop to the last song if at the beginning
+      const newTrack = currentPlaylist[currentPlaylist.length - 1];
       setTrack(newTrack);
       setTimeout(() => {
         if (audioRef.current) {
@@ -109,11 +134,21 @@ const PlayerContextProvider = (props) => {
   };
   
   const next = async () => {
-    if (!track) return;
+    if (!track || currentPlaylist.length === 0) return;
     
-    const currentIndex = songsData.findIndex(item => track._id === item._id);
-    if (currentIndex < songsData.length - 1) {
-      const newTrack = songsData[currentIndex + 1];
+    const currentIndex = currentPlaylist.findIndex(item => track._id === item._id);
+    if (currentIndex < currentPlaylist.length - 1) {
+      const newTrack = currentPlaylist[currentIndex + 1];
+      setTrack(newTrack);
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play();
+          setPlayStatus(true);
+        }
+      }, 100);
+    } else if (currentIndex === currentPlaylist.length - 1) {
+      // Loop to the first song if at the end
+      const newTrack = currentPlaylist[0];
       setTrack(newTrack);
       setTimeout(() => {
         if (audioRef.current) {
@@ -154,6 +189,7 @@ const PlayerContextProvider = (props) => {
     try {
       const response = await axios.get(`${url}/api/song/list`);
       setSongsData(response.data.songs);
+      setCurrentPlaylist(response.data.songs);
       if (response.data.songs.length > 0 && !track) {
         setTrack(response.data.songs[0]);
       }
@@ -198,7 +234,7 @@ const PlayerContextProvider = (props) => {
         });
       }
     };
-  }, [track]);
+  }, [track, currentPlaylist]);
 
   const contextValue = {
     audioRef,
@@ -222,7 +258,9 @@ const PlayerContextProvider = (props) => {
     searchResults,
     searchQuery,
     searchSongs,
-    setSearchQuery
+    setSearchQuery,
+    currentPlaylist,
+    setCurrentPlaylist
   };
 
   return (
