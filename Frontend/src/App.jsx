@@ -14,7 +14,13 @@ const App = () => {
         <Display />
       </div>
       <Player />
-      <audio ref={audioRef} src={track ? track.file : ""} preload='auto'></audio>
+      <audio 
+        ref={audioRef} 
+        src={track ? track.file : ""} 
+        preload='auto'
+        onEnded={() => console.log('Audio ended')}
+        onError={(e) => console.error('Audio error:', e)}
+      ></audio>
     </div>
   );
 };

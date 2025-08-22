@@ -1,4 +1,4 @@
-import { addSong, listSong, removeSong } from "../controllers/songController.js";
+import { addSong, listSong, searchSong, removeSong } from "../controllers/songController.js";
 import express from "express";
 import upload from "../middeleware/multer.js";
 
@@ -10,6 +10,7 @@ songRouter.post("/add", upload.fields([
 ]), addSong);
 
 songRouter.get("/list", listSong);
+songRouter.get("/search", searchSong);
 songRouter.delete("/remove/:id", removeSong); 
 
 export default songRouter;

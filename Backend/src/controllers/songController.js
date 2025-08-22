@@ -55,6 +55,41 @@ const listSong = async (req, res) => {
         });
     }
 };
+
+const searchSong = async (req, res) => {
+    try {
+        const { query } = req.query;
+        
+        if (!query) {
+            return res.json({ 
+                success: true, 
+                message: "Please provide a search query",
+                songs: [] 
+            });
+        }
+
+        const songs = await songModel.find({
+            $or: [
+                { name: { $regex: query, $options: 'i' } },
+                { album: { $regex: query, $options: 'i' } },
+                { desc: { $regex: query, $options: 'i' } }
+            ]
+        });
+        
+        res.json({ 
+            success: true, 
+            message: "Songs fetched successfully",
+            songs 
+        });
+    } catch (error) {
+        console.error(error);
+        res.json({ 
+            success: false, 
+            message: error.message 
+        });
+    }
+};
+
 const removeSong = async (req, res) => {
   try {
     const { id } = req.params; 
@@ -90,4 +125,4 @@ const removeSong = async (req, res) => {
   }
 };
 
-export { addSong, listSong,removeSong };
+export { addSong, listSong, searchSong, removeSong };
