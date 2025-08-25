@@ -3,29 +3,40 @@ import { assets } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
-  
   const navigate = useNavigate()
 
   return (
-    <>
-      <div className='w-full flex justify-between items-center font-semibold'>
-          <div className='flex items-center gap-2'>
-             <img onClick={()=>navigate(-1)} className='w-8 bg-black p-2 rounded-2xl cursor-pointer ' src={assets.arrow_left} alt="" />
-             <img onClick={()=>navigate(1)} className='w-8 bg-black p-2 rounded-2xl cursor-pointer ' src={assets.arrow_right} alt="" /> 
-          </div>
-          <div className='flex items-center gap-4'>
-            <p className='bg-white text-black text-[15px] px-4 py-1 rounded-2xl hidden md:block cursor-pointer'>Explore Premium</p>
-            <p className='bg-black py-1 px-3 rounded-2xl cursor-pointer'>Install App</p>
-            <p className='bg-purple-500 text-black w-7 h-7 rounded-full flex items-center justify-center '>M</p>
-          </div>
+    <div className="sticky top-0 z-50 bg-black/20 backdrop-blur-xl border-b border-gray-800/50 rounded-2xl mb-6">
+      <div className='w-full flex justify-between items-center font-semibold p-4'>
+        <div className='flex items-center gap-3'>
+          <button 
+            onClick={()=>navigate(-1)} 
+            className='w-10 h-10 bg-black/40 backdrop-blur-sm p-2 rounded-full cursor-pointer hover:bg-black/60 transition-all duration-200 flex items-center justify-center border border-gray-700/50'
+          >
+            <img className='w-5 h-5' src={assets.arrow_left} alt="" />
+          </button>
+          <button 
+            onClick={()=>navigate(1)} 
+            className='w-10 h-10 bg-black/40 backdrop-blur-sm p-2 rounded-full cursor-pointer hover:bg-black/60 transition-all duration-200 flex items-center justify-center border border-gray-700/50'
+          >
+            <img className='w-5 h-5' src={assets.arrow_right} alt="" /> 
+          </button>
+        </div>
+        
+        <div className='flex items-center gap-4'>
+          {/* Optional: Add user profile or premium buttons */}
+        </div>
       </div>
-      <div className='flex items-center gap-2 mt-4'>
-        <p className='bg-white text-black  px-4 pc-1 rounded-2xl cursor-pointer'>All</p>
-        <p className='bg-black px-4 py-1 rounded-2xl cursor-pointer'>Music</p>
-        <p className='bg-black px-4 py-1 rounded-2xl cursor-pointer'>Podcasts</p>
-
+      
+      <div className='flex items-center gap-3 px-4 pb-4'>
+        <button className='bg-white text-black px-6 py-2 rounded-full cursor-pointer font-semibold hover:scale-105 transition-transform duration-200'>
+          All
+        </button>
+        <button className='bg-gray-800/60 backdrop-blur-sm text-white px-6 py-2 rounded-full cursor-pointer border border-gray-700/50 hover:bg-gray-700/60 transition-all duration-200'>
+          Music
+        </button>
       </div>
-    </>
+    </div>
   )
 }
  
