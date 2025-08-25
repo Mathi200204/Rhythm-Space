@@ -25,52 +25,105 @@ const DisplaySearch = () => {
     <>
       <Navbar />
       <div className="mt-4">
+        {/* Search Input */}
         <div className="relative mb-8">
-          <img className="absolute left-3 top-3 w-5" src={assets.search_icon} alt="Search" />
-          <input
-            type="text"
-            placeholder="What do you want to listen to?"
-            className="w-full p-3 pl-10 bg-[#242424] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white"
-            value={query}
-            onChange={handleInputChange}
-            autoFocus
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+              </svg>
+            </div>
+            <input
+              type="text"
+              placeholder="What do you want to listen to?"
+              className="w-full py-4 pl-12 pr-4 bg-gray-900/60 backdrop-blur-sm text-white rounded-2xl border border-gray-700/50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300 placeholder-gray-400"
+              value={query}
+              onChange={handleInputChange}
+              autoFocus
+            />
+          </div>
         </div>
 
         {query.trim() ? (
           <div>
-            <h2 className="text-2xl font-bold mb-6">Search Results for "{query}"</h2>
+            <div className="flex items-center gap-4 mb-8">
+              <h2 className="text-3xl font-bold text-white">Search Results</h2>
+              <div className="px-4 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-medium border border-green-500/30">
+                "{query}"
+              </div>
+            </div>
             
             {searchResults.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {searchResults.map((song) => (
                   <div
                     key={song._id}
-                    className="bg-[#181818] p-4 rounded-md hover:bg-[#282828] transition-colors cursor-pointer"
+                    className="group bg-gray-900/50 backdrop-blur-sm p-6 rounded-2xl hover:bg-gray-800/60 transition-all duration-300 cursor-pointer border border-gray-700/30 hover:border-green-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/10"
                     onClick={() => playSearchResult(song)}
                   >
-                    <img
-                      src={song.image}
-                      alt={song.name}
-                      className="w-full h-40 object-cover rounded-md mb-4"
-                    />
-                    <h3 className="font-semibold text-white truncate">{song.name}</h3>
-                    <p className="text-sm text-gray-400 truncate">{song.album}</p>
-                    <p className="text-xs text-gray-500 mt-2">{song.duration}</p>
+                    <div className="relative overflow-hidden rounded-xl mb-4">
+                      <img
+                        src={song.image}
+                        alt={song.name}
+                        className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="absolute bottom-2 right-2 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                        <svg className="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </div>
+                    </div>
+                    <h3 className="font-bold text-white text-lg mb-2 truncate group-hover:text-green-400 transition-colors duration-300">{song.name}</h3>
+                    <p className="text-gray-400 text-sm truncate mb-2">{song.album}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full">{song.duration}</span>
+                    </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-400 text-lg">No results found for "{query}"</p>
-                <p className="text-gray-500 text-sm mt-2">Try searching for something else</p>
+              <div className="text-center py-20">
+                <div className="w-24 h-24 mx-auto mb-6 bg-gray-800/50 rounded-full flex items-center justify-center">
+                  <svg className="w-12 h-12 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-400 mb-2">No results found</h3>
+                <p className="text-gray-500 text-lg">Try searching for something else</p>
               </div>
             )}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">Search for songs</h2>
-            <p className="text-gray-400">Find your favorite songs, artists, and albums</p>
+          <div className="text-center py-20">
+            <div className="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-purple-900/40 to-pink-900/40 rounded-full flex items-center justify-center backdrop-blur-sm border border-purple-700/30">
+              <svg className="w-16 h-16 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+              </svg>
+            </div>
+            <h2 className="text-4xl font-bold text-white mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Search for songs
+            </h2>
+            <p className="text-gray-400 text-lg">Find your favorite songs, artists, and albums</p>
+            
+            {/* Quick Search Suggestions */}
+            <div className="mt-12">
+              <p className="text-gray-500 mb-4">Browse all</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                <div className="bg-gradient-to-br from-red-600 to-red-800 p-6 rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300">
+                  <p className="text-white font-bold text-lg">Pop</p>
+                </div>
+                <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300">
+                  <p className="text-white font-bold text-lg">Rock</p>
+                </div>
+                <div className="bg-gradient-to-br from-green-600 to-green-800 p-6 rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300">
+                  <p className="text-white font-bold text-lg">Hip Hop</p>
+                </div>
+                <div className="bg-gradient-to-br from-purple-600 to-purple-800 p-6 rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300">
+                  <p className="text-white font-bold text-lg">Electronic</p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
