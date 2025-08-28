@@ -34,7 +34,7 @@ const DisplayAlbum = () => {
           <h4 className="text-gray-300 text-lg mb-4 leading-relaxed">{albumData.desc}</h4>
           <div className="flex items-center gap-2 text-sm text-gray-400">
             <img className="w-6 h-6" src={assets.spotify_logo} alt="" />
-            <span className="font-bold text-white">Spotify</span>
+            <span className="font-bold text-white">Rhythm-Space</span>
             <span>•</span>
             <span className="text-green-400">321,233 likes</span>
             <span>•</span>
