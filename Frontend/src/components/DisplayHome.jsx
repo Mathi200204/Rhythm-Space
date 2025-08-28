@@ -15,7 +15,7 @@ const DisplayHome = () => {
       <div className="mb-12 mt-8">
         <div className="bg-gradient-to-r from-purple-900/40 via-pink-900/40 to-blue-900/40 rounded-3xl p-8 backdrop-blur-sm border border-gray-700/30">
           <h1 className="text-4xl font-black mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            hello! Music Enthusiast...
+            Hello, Rhythm-Space Fam!
           </h1>
           <p className="text-gray-300 text-lg">Ready to discover your next favorite song?</p>
         </div>
