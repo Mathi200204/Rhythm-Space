@@ -75,11 +75,11 @@ const PlayerContextProvider = (props) => {
     if (song) {
       setTrack(song);
       
-      // Determine the context: if we're on an album page, use album songs, otherwise use all songs
+      
       const isAlbumPage = window.location.pathname.includes('/album/');
       
       if (isAlbumPage) {
-        // Get album name from the current track
+        
         const albumSongs = songsData.filter(item => item.album === song.album);
         setCurrentPlaylist(albumSongs);
       } else {
