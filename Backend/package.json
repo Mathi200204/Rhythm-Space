@@ -12,7 +12,7 @@
   "keywords": [],
   "author": "Mathi200204",
   "license": "ISC",
-  "description": "Backend for Spotify Clone",
+  "description": "Backend for Rhythm-Space",
   "dependencies": {
     "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
