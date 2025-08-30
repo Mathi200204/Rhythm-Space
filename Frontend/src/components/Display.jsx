@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import DisplayHome from './DisplayHome';
 import DisplayAlbum from './DisplayAlbum';
 import DisplaySearch from './DisplaySearch';
+import DisplayFavorites from './DisplayFavorites';
 import { PlayerContext } from '../context/PlayerContext';
 
 const Display = () => {
@@ -11,6 +12,7 @@ const Display = () => {
   const location = useLocation();
   const isAlbum = location.pathname.includes("album");
   const isSearch = location.pathname.includes("search");
+  const isFavorites = location.pathname.includes("favorites");
   const albumId = isAlbum ? location.pathname.split("/").pop() : "";
   const album = albumsData.find(x => x._id === albumId);
   const bgColor = album ? album.bgColour : "#0f0f23";
@@ -19,18 +21,21 @@ const Display = () => {
     if (displayRef.current) {
       if (isAlbum && albumId && album) {
         displayRef.current.style.background = `linear-gradient(135deg, ${bgColor}40, #0f0f23, #1a1a2e)`;
+      } else if (isFavorites) {
+        displayRef.current.style.background = `linear-gradient(135deg, #7f1d1d, #0f0f23, #1a1a2e)`;
       } else {
         displayRef.current.style.background = `linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e)`;
       }
     }
-  }, [isAlbum, bgColor, albumId, album]);
+  }, [isAlbum, bgColor, albumId, album, isFavorites]);
 
   return (
-    <div ref={displayRef} className='w-[100%] m-2 px-6 pt-4 rounded-3xl text-white overflow-auto lg:w-[75%] lg:ml-0 backdrop-blur-xl border border-gray-800/50 shadow-2xl'>
+    <div ref={displayRef} className='w-[100%] m-2 px-6 pt-4 rounded-3xl text-white overflow-auto lg:w-[75%] lg:ml-0 backdrop-blur-xl border border-gray-800/50 shadow-2xl pb-24 lg:pb-0'>
       <Routes>
         <Route path='/' element={<DisplayHome />} />
         <Route path='/album/:id' element={<DisplayAlbum />} />
         <Route path='/search' element={<DisplaySearch />} />
+        <Route path='/favorites' element={<DisplayFavorites />} />
       </Routes>
     </div>
   );
