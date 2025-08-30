@@ -1,9 +1,21 @@
-import React from 'react'
+import React, { useState, useContext } from 'react'
 import { assets } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
+import { PlayerContext } from '../context/PlayerContext'
 
 const Navbar = () => {
   const navigate = useNavigate()
+  const { setMusicFilter, musicFilter } = useContext(PlayerContext)
+  const [showMobileSearch, setShowMobileSearch] = useState(false)
+
+  const handleMusicFilter = () => {
+    setMusicFilter(!musicFilter)
+  }
+
+  const handleSearchClick = () => {
+    setShowMobileSearch(false)
+    navigate('/search')
+  }
 
   return (
     <div className="sticky top-0 z-50 bg-black/20 backdrop-blur-xl border-b border-gray-800/50 rounded-2xl mb-6">
@@ -22,16 +34,26 @@ const Navbar = () => {
             <img className='w-5 h-5' src={assets.arrow_right} alt="" /> 
           </button>
         </div>
+
+        {/* Rhythm-Space Logo */}
+        <div className='flex items-center gap-3 cursor-pointer' onClick={() => navigate('/')}>
+          <img className='w-8 h-8 hover:scale-110 transition-transform duration-200' src={assets.rhythm_space} alt="Rhythm-Space" />
+          <span className='font-bold text-lg bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent hidden sm:block'>
+            Rhythm-Space
+          </span>
+        </div>
       </div>
       
       <div className='flex items-center gap-3 px-4 pb-4'>
         <button className='bg-white text-black px-6 py-2 rounded-full cursor-pointer font-semibold hover:scale-105 transition-transform duration-200'>
           All
         </button>
-        <button className='bg-gray-800/60 backdrop-blur-sm text-white px-6 py-2 rounded-full cursor-pointer border border-gray-700/50 hover:bg-gray-700/60 transition-all duration-200'>
+        <button 
+          onClick={handleMusicFilter}
+          className={`${musicFilter ? 'bg-green-500 text-black' : 'bg-gray-800/60 text-white border border-gray-700/50'} backdrop-blur-sm px-6 py-2 rounded-full cursor-pointer hover:bg-gray-700/60 transition-all duration-200 font-semibold`}
+        >
           Music
         </button>
-               
       </div>
     </div>
   )
