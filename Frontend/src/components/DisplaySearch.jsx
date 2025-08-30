@@ -1,10 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import { PlayerContext } from "../context/PlayerContext";
-import { assets } from "../assets/assets";
 
 const DisplaySearch = () => {
-  const { searchSongs, searchResults, searchQuery, setSearchQuery, playSearchResult } = useContext(PlayerContext);
+  const { searchSongs, searchResults, playSearchResult, toggleLike, isLiked } = useContext(PlayerContext);
   const [query, setQuery] = useState("");
 
   useEffect(() => {
@@ -15,10 +14,15 @@ const DisplaySearch = () => {
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [query]);
+  }, [query, searchSongs]);
 
   const handleInputChange = (e) => {
     setQuery(e.target.value);
+  };
+
+  const handleLikeClick = (e, songId) => {
+    e.stopPropagation();
+    toggleLike(songId);
   };
 
   return (
@@ -68,6 +72,24 @@ const DisplaySearch = () => {
                         className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      
+                      {/* Like Button */}
+                      <button
+                        onClick={(e) => handleLikeClick(e, song._id)}
+                        className='absolute top-2 right-2 w-8 h-8 bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110'
+                      >
+                        <svg 
+                          className={`w-4 h-4 transition-colors duration-200 ${isLiked(song._id) ? 'text-red-500 fill-current' : 'text-white hover:text-red-400'}`} 
+                          fill={isLiked(song._id) ? "currentColor" : "none"}
+                          stroke="currentColor" 
+                          strokeWidth={isLiked(song._id) ? "0" : "2"}
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                      </button>
+                      
+                      {/* Play Button */}
                       <div className="absolute bottom-2 right-2 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                         <svg className="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M8 5v14l11-7z"/>
@@ -78,6 +100,11 @@ const DisplaySearch = () => {
                     <p className="text-gray-400 text-sm truncate mb-2">{song.album}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full">{song.duration}</span>
+                      {isLiked(song._id) && (
+                        <svg className="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -110,16 +137,28 @@ const DisplaySearch = () => {
             <div className="mt-12">
               <p className="text-gray-500 mb-4">Browse all</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-                <div className="bg-gradient-to-br from-red-600 to-red-800 p-6 rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300">
+                <div 
+                  onClick={() => setQuery('pop')}
+                  className="bg-gradient-to-br from-red-600 to-red-800 p-6 rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300"
+                >
                   <p className="text-white font-bold text-lg">Pop</p>
                 </div>
-                <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300">
+                <div 
+                  onClick={() => setQuery('rock')}
+                  className="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300"
+                >
                   <p className="text-white font-bold text-lg">Rock</p>
                 </div>
-                <div className="bg-gradient-to-br from-green-600 to-green-800 p-6 rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300">
+                <div 
+                  onClick={() => setQuery('hip hop')}
+                  className="bg-gradient-to-br from-green-600 to-green-800 p-6 rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300"
+                >
                   <p className="text-white font-bold text-lg">Hip Hop</p>
                 </div>
-                <div className="bg-gradient-to-br from-purple-600 to-purple-800 p-6 rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300">
+                <div 
+                  onClick={() => setQuery('electronic')}
+                  className="bg-gradient-to-br from-purple-600 to-purple-800 p-6 rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300"
+                >
                   <p className="text-white font-bold text-lg">Electronic</p>
                 </div>
               </div>
