@@ -20,7 +20,7 @@ import queue_icon from './queue.png'
 import volume_icon from './volume.png'
 import arrow_right from './right_arrow.png'
 import arrow_left from './left_arrow.png'
-import spotify_logo from './spotify_logo.png'
+import rhythm_space from './rhythm_space.png'
 import clock_icon from './clock_icon.png'
 import img1 from './img1.jpg'
 import img2 from './img2.jpg'
@@ -29,8 +29,8 @@ import img4 from './img4.jpg'
 import img5 from './img5.jpg'
 import img6 from './img6.jpg'
 import img7 from './img7.jpg'
-import img8 from './img8.jpg'
-import img9 from './img9.jpg'
+import img8 from './img8.jpg'         
+import img9 from './img9.jpg'         
 import img10 from './img10.jpg'
 import img11 from './img11.jpg'
 import img12 from './img12.jpg'
@@ -65,7 +65,7 @@ export const assets = {
     pause_icon,
     arrow_left,
     arrow_right,
-    spotify_logo,
+    rhythm_space,
     clock_icon
 }
 

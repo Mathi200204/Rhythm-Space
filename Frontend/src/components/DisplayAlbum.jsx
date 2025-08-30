@@ -33,7 +33,7 @@ const DisplayAlbum = () => {
           <h2 className="text-6xl font-black mb-6 md:text-8xl bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">{albumData.name}</h2>
           <h4 className="text-gray-300 text-lg mb-4 leading-relaxed">{albumData.desc}</h4>
           <div className="flex items-center gap-2 text-sm text-gray-400">
-            <img className="w-6 h-6" src={assets.spotify_logo} alt="" />
+            <img className="w-6 h-6" src={assets.rhythm_space} alt="" />
             <span className="font-bold text-white">Rhythm-Space</span>
             <span>•</span>
             <span className="text-green-400">321,233 likes</span>
