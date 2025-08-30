@@ -39,8 +39,8 @@ const DisplayAlbum = () => {
             <span className="text-green-400">321,233 likes</span>
             <span>•</span>
             <span className="font-bold text-white">{albumSongs.length} songs</span>
-            <span>•</span>
-            <span>about 2hr 40 min</span>
+            <span></span>
+            <span></span>
           </div>
         </div>
       </div>
@@ -60,7 +60,7 @@ const DisplayAlbum = () => {
       <div className="bg-gray-900/30 rounded-2xl backdrop-blur-sm border border-gray-700/50 overflow-hidden">
         <div className="grid grid-cols-3 sm:grid-cols-4 px-6 py-4 text-gray-400 border-b border-gray-700/50 text-sm font-medium">
           <p><span className="mr-4">#</span>Title</p>
-          <p>Album</p>
+          <p >Album</p>
           <p className="hidden sm:block">Date Added</p>
           <div className="flex justify-center">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -80,10 +80,10 @@ const DisplayAlbum = () => {
               <svg className="mr-4 w-4 h-4 text-green-400 hidden group-hover:block" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z"/>
               </svg>
-              <img className="w-12 h-12 rounded-lg mr-4 shadow-md" src={item.image} alt="" />
-              <span className="font-medium group-hover:text-green-400 transition-colors duration-200">{item.name}</span>
+              <img className="w-12 h-12 rounded-lg mr-4 shadow-md hidden sm:block" src={item.image} alt="" />
+              <span className="font-medium group-hover:text-green-400 transition-colors duration-200 ">{item.name}</span>
             </div>
-            <p className="text-gray-400 text-sm">{albumData.name}</p>
+            <p  className="text-gray-400 text-sm ">{albumData.name}</p>
             <p className="text-gray-400 text-sm hidden sm:block">5 days ago</p>
             <p className="text-gray-400 text-sm text-center">{item.duration}</p>
           </div>
