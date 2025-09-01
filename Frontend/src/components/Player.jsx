@@ -3,23 +3,38 @@ import { assets } from "../assets/assets.js";
 import { PlayerContext } from "../context/PlayerContext.jsx";
 
 const Player = () => {
-  const { track, seekBar, seekBg, playStatus, play, pause, time, previous, next, seekSong } =
+  const { track, seekBar, seekBg, playStatus, play, pause, time, previous, next, seekSong, toggleLike, isLiked } =
     useContext(PlayerContext);
 
+  const handleLikeClick = () => {
+    if (track) {
+      toggleLike(track._id);
+    }
+  };
+
   return track ? (
-    <div className="h-[10%] bg-gradient-to-r from-gray-900 via-black to-gray-900 flex justify-between items-center text-white px-6 backdrop-blur-xl border-t border-gray-800/50">
+    <div className="h-[10%] bg-gradient-to-r from-gray-900 via-black to-gray-900 flex justify-between items-center text-white px-6 backdrop-blur-xl border-t border-gray-800/50 fixed bottom-0 left-0 right-0 z-50 lg:relative">
       {/* Track Info */}
-      <div className="hidden lg:flex items-center gap-4 min-w-[300px]">
-        <div className="relative group">
-          <img className="w-14 h-14 rounded-lg shadow-lg" src={track.image} alt="" />
-          <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+
+
+      {/* Mobile Track Info */}
+      <div className="flex lg:hidden items-center gap-3 min-w-0">
+        <img className="w-12 h-12 rounded-lg shadow-lg" src={track.image} alt="" />
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold text-white text-sm truncate">{track.name}</p>
+          <p className="text-gray-400 text-xs truncate">{track.desc.slice(0, 20)}</p>
         </div>
-        <div>
-          <p className="font-semibold text-white hover:underline cursor-pointer">{track.name}</p>
-          <p className="text-gray-400 text-sm">{track.desc.slice(0, 12)}</p>
-        </div>
-        <button className="text-green-500 hover:text-green-400 ml-2">
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+        <button 
+          onClick={handleLikeClick}
+          className={`transition-colors duration-200 ${isLiked(track._id) ? 'text-red-500' : 'text-gray-400'}`}
+        >
+          <svg 
+            className="w-5 h-5" 
+            fill={isLiked(track._id) ? "currentColor" : "none"}
+            stroke="currentColor" 
+            strokeWidth={isLiked(track._id) ? "0" : "2"}
+            viewBox="0 0 24 24"
+          >
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
           </svg>
         </button>
@@ -27,8 +42,8 @@ const Player = () => {
 
       {/* Player Controls */}
       <div className="flex flex-col items-center gap-2 flex-1 max-w-[600px]">
-        <div className="flex gap-6 items-center">
-          <button className="text-gray-400 hover:text-white transition-colors duration-200">
+        <div className="flex gap-4 lg:gap-6 items-center">
+          <button className="hidden lg:block text-gray-400 hover:text-white transition-colors duration-200">
             <img className="w-4 h-4" src={assets.shuffle_icon} alt="" />
           </button>
           
@@ -36,17 +51,17 @@ const Player = () => {
             onClick={previous} 
             className="text-gray-400 hover:text-white transition-all duration-200 hover:scale-110"
           >
-            <img className="w-5 h-5" src={assets.prev_icon} alt="" />
+            <img className="w-4 h-4 lg:w-5 lg:h-5" src={assets.prev_icon} alt="" />
           </button>
 
           <button 
             onClick={playStatus ? pause : play}
-            className="w-12 h-12  rounded-full flex items-center justify-center hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-white/20"
+            className="w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-white/20"
           >
             {playStatus ? (
-              <img className="w-5 h-5" src={assets.pause_icon} alt="" />
+              <img className="w-4 h-4 lg:w-5 lg:h-5" src={assets.pause_icon} alt="" />
             ) : (
-              <img className="w-5 h-5 ml-1" src={assets.play_icon} alt="" />
+              <img className="w-4 h-4 lg:w-5 lg:h-5 ml-1" src={assets.play_icon} alt="" />
             )}
           </button>
 
@@ -54,10 +69,10 @@ const Player = () => {
             onClick={next} 
             className="text-gray-400 hover:text-white transition-all duration-200 hover:scale-110"
           >
-            <img className="w-5 h-5" src={assets.next_icon} alt="" />
+            <img className="w-4 h-4 lg:w-5 lg:h-5" src={assets.next_icon} alt="" />
           </button>
 
-          <button className="text-gray-400 hover:text-white transition-colors duration-200">
+          <button className="hidden lg:block text-gray-400 hover:text-white transition-colors duration-200">
             <img className="w-4 h-4" src={assets.loop_icon} alt="" />
           </button>
         </div>
