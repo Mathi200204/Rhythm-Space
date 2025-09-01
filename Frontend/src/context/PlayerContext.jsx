@@ -27,6 +27,39 @@ const PlayerContextProvider = (props) => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPlaylist, setCurrentPlaylist] = useState([]);
+  const [likedSongs, setLikedSongs] = useState(new Set());
+  const [musicFilter, setMusicFilter] = useState(false);
+
+  // Load liked songs from localStorage on mount
+  useEffect(() => {
+    const savedLikes = localStorage.getItem('likedSongs');
+    if (savedLikes) {
+      setLikedSongs(new Set(JSON.parse(savedLikes)));
+    }
+  }, []);
+
+  // Save liked songs to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('likedSongs', JSON.stringify(Array.from(likedSongs)));
+  }, [likedSongs]);
+
+  const toggleLike = (songId) => {
+    const newLikedSongs = new Set(likedSongs);
+    if (newLikedSongs.has(songId)) {
+      newLikedSongs.delete(songId);
+    } else {
+      newLikedSongs.add(songId);
+    }
+    setLikedSongs(newLikedSongs);
+  };
+
+  const isLiked = (songId) => {
+    return likedSongs.has(songId);
+  };
+
+  const getLikedSongs = () => {
+    return songsData.filter(song => likedSongs.has(song._id));
+  };
 
   const formatTime = (seconds) => {
     if (isNaN(seconds)) return { minute: "00", second: "00" };
@@ -75,15 +108,12 @@ const PlayerContextProvider = (props) => {
     if (song) {
       setTrack(song);
       
-      
       const isAlbumPage = window.location.pathname.includes('/album/');
       
       if (isAlbumPage) {
-        
         const albumSongs = songsData.filter(item => item.album === song.album);
         setCurrentPlaylist(albumSongs);
       } else {
-        // Use all songs for "Today's biggest hits" and other non-album contexts
         setCurrentPlaylist(songsData);
       }
       
@@ -121,7 +151,6 @@ const PlayerContextProvider = (props) => {
         }
       }, 100);
     } else if (currentIndex === 0) {
-      // Loop to the last song if at the beginning
       const newTrack = currentPlaylist[currentPlaylist.length - 1];
       setTrack(newTrack);
       setTimeout(() => {
@@ -147,7 +176,6 @@ const PlayerContextProvider = (props) => {
         }
       }, 100);
     } else if (currentIndex === currentPlaylist.length - 1) {
-      // Loop to the first song if at the end
       const newTrack = currentPlaylist[0];
       setTrack(newTrack);
       setTimeout(() => {
@@ -260,7 +288,13 @@ const PlayerContextProvider = (props) => {
     searchSongs,
     setSearchQuery,
     currentPlaylist,
-    setCurrentPlaylist
+    setCurrentPlaylist,
+    likedSongs,
+    toggleLike,
+    isLiked,
+    getLikedSongs,
+    musicFilter,
+    setMusicFilter
   };
 
   return (
